@@ -7,7 +7,6 @@ import { signoutRouter } from './routes/signout';
 import { signupRouter } from './routes/signup';
 import { currentUserRouter } from './routes/current-user';
 import { errorHandler } from './middlewares/error-handler';
-import { NotFoundError } from './errors/not-found-error';
 
 const app = express();
 
@@ -19,12 +18,13 @@ app.use(bodyParser.json());
 app.use(
     cookieSession({
         signed: false,
-        secure: true
+        secure: false
     })
 );
+
+app.use(signupRouter);
 app.use(signinRouter);
 app.use(currentUserRouter);
-app.use(signupRouter);
 app.use(signoutRouter);
 
 
