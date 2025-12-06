@@ -1,24 +1,28 @@
 import { useState } from "react";
-import axios from "axios";
+import userRequest from "../../hooks/user-request";
+import Router from "next/router";
 
 export default () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [errors, setError] = useState([]);
+    const { doRequest, errors } = userRequest({
+        url: "/api/users/signup",
+        method: "post",
+        body: {
+            email, password
+        },
+
+        onSuccess: () => {
+            Router.push('/');
+        }
+    });
 
     const onSubmit = async (event) => {
-        try {
-            event.preventDefault();
 
-            const response = await axios.post('/api/users/signup', {
-                email, password
-            })
-            console.log(response.data);
-        }
-        catch (err) {
-            setError(err.response.data.errors);
-            console.log(err.response.data);
-        }
+        event.preventDefault();
+
+        await doRequest();
+
     };
 
     return (
@@ -34,18 +38,7 @@ export default () => {
                     onChange={e => setPassword(e.target.value)} />
             </div>
             {
-                errors.length > 0 &&
-                <div className="alert alert-danger">
-                    <h4>Opps..</h4>
-                    <ul className="my-0">
-
-                        {
-                            errors.map((err, i) => <li key={i}>{err.message}</li>
-                            )
-                        }
-
-                    </ul>
-                </div>
+                errors
             }
 
             <button className="btn btn-primary">Sing up</button>
