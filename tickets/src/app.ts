@@ -1,10 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cookieSession from 'cookie-session';
-import { signinRouter } from './routes/signin';
-import { signoutRouter } from './routes/signout';
-import { signupRouter } from './routes/signup';
-import { currentUserRouter } from './routes/current-user';
 import { errorHandler } from '@ticketing_dev/common';
 
 
@@ -22,10 +18,6 @@ app.use(
     })
 );
 
-app.use(signupRouter);
-app.use(signinRouter);
-app.use(currentUserRouter);
-app.use(signoutRouter);
 
 
 // app.all('*', async (req, res) => {`
