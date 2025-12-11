@@ -2,12 +2,21 @@
   "name": "@ticketing_dev/common",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "files": [
+    "build/**/*"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rimraf ./build",
+    "build": "npm run clean && tsc"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "module",
+  "devDependencies": {
+    "rimraf": "^6.1.2",
+    "typescript": "^5.9.3"
+  }
 }
