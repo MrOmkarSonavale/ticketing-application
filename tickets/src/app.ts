@@ -2,7 +2,9 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cookieSession from 'cookie-session';
 import { errorHandler } from '@ticketing_dev/common';
-
+import { NotFoundError } from '@ticketing_dev/common';
+import { createTicketRouter } from './routes/new-ticket';
+import { currentUser } from '@ticketing_dev/common';
 
 const app = express();
 
@@ -18,11 +20,13 @@ app.use(
     })
 );
 
+app.use(currentUser);
+app.use(createTicketRouter);
 
+app.all(/.*/, async (req, res) => {
+    throw new NotFoundError();
+});
 
-// app.all('*', async (req, res) => {`
-//     throw new NotFoundError();
-// })
 
 app.use(errorHandler);
 

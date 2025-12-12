@@ -1,11 +1,11 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import { app } from "../app";
-
-
+import jwt from "jsonwebtoken";
 
 
 let mongo: MongoMemoryServer;
+
 beforeAll(async () => {
     process.env.JWT_KEY = 'asdf';
     mongo = await MongoMemoryServer.create();
@@ -29,5 +29,24 @@ afterAll(async () => {
     }
     await mongoose.connection.close();
 });
+
+export const signin = () => {
+    //build a jwt payload {id , email };
+    const payload = {
+        id: '12klafdg',
+        email: 'test@gmail.com'
+    };
+
+    const token = jwt.sign(payload, process.env.JWT_KEY!);
+
+    const session = { jwt: token };
+
+    const jsontoken = JSON.stringify(session);
+
+    const bse64 = Buffer.from(jsontoken).toString('base64');
+
+    return `session=${bse64}`
+};
+
 
 
