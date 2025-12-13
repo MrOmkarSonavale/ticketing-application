@@ -22,7 +22,7 @@ it('can only be accessed if the user is signed in', async () => {
 });
 
 
-it('reqturn a status other than 401 if user is signed in', async () => {
+it('return a status other than 401 if user is signed in', async () => {
     const response = await request(app)
         .post('/api/tickets')
         .send({});

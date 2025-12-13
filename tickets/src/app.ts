@@ -6,6 +6,8 @@ import { NotFoundError } from '@ticketing_dev/common';
 import { createTicketRouter } from './routes/new-ticket';
 import { currentUser } from '@ticketing_dev/common';
 import { showTicketRouter } from './routes/show-ticket';
+import { indexTicketRouter } from './routes/index-ticket';
+import { updateTicketRouter } from './routes/update-ticket';
 
 const app = express();
 
@@ -24,6 +26,8 @@ app.use(
 app.use(currentUser);
 app.use(createTicketRouter);
 app.use(showTicketRouter);
+app.use(indexTicketRouter);
+app.use(updateTicketRouter);
 
 app.all(/.*/, async (req, res) => {
     throw new NotFoundError();
