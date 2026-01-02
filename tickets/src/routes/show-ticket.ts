@@ -12,9 +12,9 @@ router.get("/api/tickets/:id", async (req: Request, res: Response) => {
     };
 
 
-    res.status(200).send({
-        data: ticket
-    });
+    res.status(200).send(
+        ticket
+    );
 
 
 });

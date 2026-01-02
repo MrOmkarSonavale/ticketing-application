@@ -17,7 +17,6 @@ it('can only be accessed if the user is signed in', async () => {
         .set('Cookie', signin())
         .send({});
 
-    console.log(response.status);
     expect(response.status).not.toEqual(401);
 });
 
@@ -27,7 +26,7 @@ it('return a status other than 401 if user is signed in', async () => {
         .post('/api/tickets')
         .send({});
 
-    expect(response.status).not.toEqual(401);
+    expect(response.status).toEqual(401);
 });
 
 it('returns an error if an invalid title is provided', async () => {
