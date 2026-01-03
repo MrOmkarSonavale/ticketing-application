@@ -1,7 +1,7 @@
-import Listener from "./base-listener.js";
+import Listener from "../../../common/src/events/base-listener.ts";
 import { Message } from "node-nats-streaming";
-import { TicketCreatedEvent } from "./ticket-created-event.js";
-import { Subject } from "./subject.js";
+import { TicketCreatedEvent } from "../../../common/src/events/ticket-created-event.ts";
+import { Subject } from "../../../common/src/events/subject.ts";
 
 class TicketCreatedListener extends Listener<TicketCreatedEvent> {
     subject: Subject.TicketCreated = Subject.TicketCreated;

@@ -1,10 +1,11 @@
-import { Subject } from "../../../common/src/events/subject.ts";
+import { Subject } from "./subject";
 
 export interface TicketCreatedEvent {
     subject: Subject.TicketCreated;
     data: {
         id: string;
         title: string;
-        price: number
+        price: number;
+        userId: string;
     };
 };

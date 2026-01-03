@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "publish": "node --loader ts-node/esm src/publisher.ts",
-    "listen": "node --loader ts-node/esm src/listener.ts"
+    "publish": "tsx src/publisher.ts",
+    "listen": "tsx src/listener.ts"
   },
   "dependencies": {
     "@types/node": "^25.0.3",
@@ -17,6 +17,10 @@
   "license": "ISC",
   "type": "module",
   "devDependencies": {
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0"
+  },
+  "ts-node": {
+    "esm": true
   }
 }

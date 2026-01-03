@@ -1,6 +1,6 @@
 import nats from 'node-nats-streaming';
 import { randomBytes } from 'node:crypto';
-import TicketCreatedListener from './events/ticket-created-lisener.js';
+import TicketCreatedListener from './events/ticket-created-lisener.ts';
 
 console.clear();
 
@@ -18,6 +18,10 @@ stan.on('connect', () => {
     });
 
     new TicketCreatedListener(stan).listen();
+});
+
+stan.on('error', (err) => {
+    console.error('NATS connection error:', err);
 });
 
 process.on('SIGINT', () => stan.close());
