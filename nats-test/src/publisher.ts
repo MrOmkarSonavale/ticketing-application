@@ -1,7 +1,6 @@
 import * as nats from "node-nats-streaming";
 import { randomBytes } from 'node:crypto';
-import { TicketCreatedPublisher } from './events/ticket-created-publisher.ts'
-
+import { TicketCreatedPublisher } from '@ticketing_dev/common';
 console.clear();
 
 const client = nats.connect("ticketing", randomBytes(4).toString('hex'), {
@@ -15,7 +14,9 @@ client.on("connect", async () => {
 
 
     publisher.publish({
-
+        id: '123',
+        title: 'conncet',
+        price: 29,
     });
     // try {
     //     await publisher.publish({

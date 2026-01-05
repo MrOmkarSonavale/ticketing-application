@@ -11,9 +11,13 @@ export * from "./middlewares/require-auth.js";
 export * from "./middlewares/validate-request.js";
 
 export * from "./events/base-listener.js";
+
 export * from "./events/base-publisher.js";
+
 export * from "./events/subject.js";
 
 export * from "./events/ticket-created-event.js";
 
 export * from "./events/ticket-updated-event.js";
+
+export * from "./events/ticket-created-publisher.js"
