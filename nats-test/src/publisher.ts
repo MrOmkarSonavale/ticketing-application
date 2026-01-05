@@ -13,15 +13,19 @@ client.on("connect", async () => {
 
     const publisher = new TicketCreatedPublisher(client);
 
-    try {
-        await publisher.publish({
-            id: '123',
-            title: 'conncet',
-            price: 29,
-        });
-    } catch (err) {
-        console.error('Error publishing ticket created event:', err);
-    }
+
+    publisher.publish({
+
+    });
+    // try {
+    //     await publisher.publish({
+    //         id: '123',
+    //         title: 'conncet',
+    //         price: 29,
+    //     });
+    // } catch (err) {
+    //     console.error('Error publishing ticket created event:', err);
+    // }
 });
 
 client.on('error', (err) => {
