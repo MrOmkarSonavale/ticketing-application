@@ -4,6 +4,8 @@ import { app } from "../app";
 import jwt from "jsonwebtoken";
 
 
+jest.mock('../nats-wrapper');
+
 let mongo: MongoMemoryServer;
 
 beforeAll(async () => {

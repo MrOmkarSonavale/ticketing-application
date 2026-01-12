@@ -12,23 +12,19 @@ client.on("connect", async () => {
 
     const publisher = new TicketCreatedPublisher(client);
 
+    try {
+        await publisher.publish({
+            id: '123',
+            title: 'conncet',
+            price: 29,
+            userId: 'user123',
+        });
+    } catch (err) {
+        console.error('Error publishing ticket created event:', err);
+    }
 
-    publisher.publish({
-        id: '123',
-        title: 'conncet',
-        price: 29,
-    });
-    // try {
-    //     await publisher.publish({
-    //         id: '123',
-    //         title: 'conncet',
-    //         price: 29,
-    //     });
-    // } catch (err) {
-    //     console.error('Error publishing ticket created event:', err);
-    // }
 });
 
-client.on('error', (err) => {
-    console.error('NATS connection error:', err);
+client.on("error", (err) => {
+    console.error('❌ NATS connection error:', err);
 });

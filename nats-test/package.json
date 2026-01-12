@@ -8,7 +8,7 @@
     "listen": "tsx src/listener.ts"
   },
   "dependencies": {
-    "@ticketing_dev/common": "^1.0.9",
+    "@ticketing_dev/common": "^1.0.11",
     "@types/node": "^25.0.3",
     "node-nats-streaming": "^0.3.2",
     "typescript": "^5.9.3"

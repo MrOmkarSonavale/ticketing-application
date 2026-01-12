@@ -1,7 +1,6 @@
 import nats from 'node-nats-streaming';
 import { randomBytes } from 'node:crypto';
 import TicketCreatedListener from './events/ticket-created-lisener.ts';
-
 console.clear();
 
 const stan = nats.connect('ticketing', randomBytes(4).toString('hex'),
