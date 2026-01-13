@@ -3,11 +3,11 @@ import bodyParser from 'body-parser';
 import cookieSession from 'cookie-session';
 import { errorHandler } from '@ticketing_dev/common';
 import { NotFoundError } from '@ticketing_dev/common';
-import { createTicketRouter } from './routes/new-ticket';
 import { currentUser } from '@ticketing_dev/common';
-import { showTicketRouter } from './routes/show-ticket';
-import { indexTicketRouter } from './routes/index-ticket';
-import { updateTicketRouter } from './routes/update-ticket';
+import { deleteOrderRouter } from './routes/delete';
+import { indexOrderRouter } from './routes/index';
+import { newOrderRouter } from './routes/new';
+import { showOrderRouter } from './routes/show';
 
 const app = express();
 
@@ -24,10 +24,10 @@ app.use(
 );
 
 app.use(currentUser);
-app.use(createTicketRouter);
-app.use(showTicketRouter);
-app.use(indexTicketRouter);
-app.use(updateTicketRouter);
+app.use(deleteOrderRouter);
+app.use(indexOrderRouter);
+app.use(newOrderRouter);
+app.use(showOrderRouter);
 
 app.use(errorHandler);
 
