@@ -2,6 +2,7 @@ import request from 'supertest';
 import { app } from '../../app';
 import mongoose from 'mongoose';
 import { signin } from '../../test/setup';
+import { natsWrapper } from '../../__mocks__/nats-wrapper';
 
 //ok
 it('return a 404 if the provided id does not exits', async () => {
@@ -108,4 +109,25 @@ it('update the ticket provided valid inputs', async () => {
 
     expect(ticketResponse.body.title).toEqual('new title');
     expect(ticketResponse.body.price).toEqual(100);
+});
+
+it('publish an event', async () => {
+    const cookie = signin();
+
+    const response = await request(app)
+        .post('/api/tickets')
+        .set('Cookie', cookie)
+        .send({
+            title: 'asldkfh',
+            price: 20
+        });
+
+    await request(app)
+        .put(`/api/tickets/${response.body.id}`)
+        .set('Cookie', cookie)
+        .send({
+            title: "new title",
+            price: 100
+        })
+        .expect(200);
 });
