@@ -1,14 +1,15 @@
 import mongoose, { Mongoose } from "mongoose";
-import { transform } from "typescript";
+import { Order, OrderStatus } from "./order";
 
 interface TicketAttrs {
-    titile: string;
+    title: string;
     price: number;
 };
 
 export interface TicketDoc extends mongoose.Document {
     title: string;
     price: number;
+    isReserved(): Promise<Boolean>;
 };
 
 interface TicketModel extends mongoose.Model<TicketDoc> {
@@ -27,16 +28,30 @@ const ticketSchema = new mongoose.Schema({
     }
 }, {
     toJSON: {
-        transform(doc, ret) {
+        transform(doc, ret: any) {
             ret.id = ret._id.toJSON();
             delete ret._id;
         }
     }
 });
 
-
 ticketSchema.statics.build = (attrs: TicketAttrs) => {
     return new Ticket(attrs);
+};
+
+ticketSchema.methods.isReserved = async function () {
+    const exitingOrder = await Order.findOne({
+        ticket: this,
+        status: {
+            $in: [
+                OrderStatus.Created,
+                OrderStatus.AwaitingPayment,
+                OrderStatus.Complete
+            ]
+        }
+    });
+
+    return !!exitingOrder;
 };
 
 const Ticket = mongoose.model<TicketDoc, TicketModel>('Ticket', ticketSchema);
