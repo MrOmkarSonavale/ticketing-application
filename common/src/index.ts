@@ -23,3 +23,7 @@ export * from "./events/ticket-updated-event.js";
 export * from "./events/ticket-created-publisher.js"
 
 export * from './events/order-status.js';
+
+export * from './events/order-created-event.js'
+
+export * from './events/order-cancelled-event.js';

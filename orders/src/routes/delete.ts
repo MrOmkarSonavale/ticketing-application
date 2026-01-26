@@ -1,6 +1,8 @@
 import express, { Request, Response } from 'express';
 import { Order, OrderStatus } from '../models/order';
 import { NotAuthorizedError, NotFoundError, requireAuth } from '@ticketing_dev/common';
+import { OrderCancelledPublisher } from '../events/publishers/order-cancelled-publisher';
+import { natsWrapper } from '../nats-wappper';
 
 
 const router = express.Router();
@@ -8,7 +10,7 @@ const router = express.Router();
 router.get('/api/orders/:orderId', requireAuth, async (req: Request, res: Response) => {
     const { orderId } = req.params;
 
-    const order = await Order.findById(orderId);
+    const order = await Order.findById(orderId).populate('ticket');
 
     if (!order) throw new NotFoundError();
 
@@ -17,6 +19,13 @@ router.get('/api/orders/:orderId', requireAuth, async (req: Request, res: Respon
     order.status = OrderStatus.Cancelled;
 
     await order.save();
+
+    new OrderCancelledPublisher(natsWrapper.Client).publish({
+        id: order._id.toString(),
+        ticket: {
+            id: order.ticket._id.toString(),
+        }
+    });
 
     res.status(204).send({ order });
 });
