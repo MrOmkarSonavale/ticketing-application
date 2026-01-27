@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import { app } from './app';
 import { natsWrapper } from './nats-wappper';
+import { TicketCreatedListener } from './events/listeners/ticket-created-listeners';
+import { TicketUpdatedListener } from './events/listeners/ticket-updated-listeners';
 
 const start = async () => {
 
@@ -32,8 +34,13 @@ const start = async () => {
         process.on("SIGINT", () => natsWrapper.Client.close());
         process.on("SIGTERM", () => natsWrapper.Client.close());
 
+        new TicketCreatedListener(natsWrapper.Client).listen();
+        new TicketUpdatedListener(natsWrapper.Client).listen();
+
         await mongoose.connect(process.env.MONGO_URI);
         console.log("connected to mongodb");
+
+
     }
     catch (err) {
         console.error(err);
