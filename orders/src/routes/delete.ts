@@ -21,9 +21,10 @@ router.get('/api/orders/:orderId', requireAuth, async (req: Request, res: Respon
     await order.save();
 
     new OrderCancelledPublisher(natsWrapper.Client).publish({
-        id: order._id.toString(),
+        id: order._id.toJSON(),
+        version: order.version,
         ticket: {
-            id: order.ticket._id.toString(),
+            id: order.ticket._id.toJSON(),
         }
     });
 

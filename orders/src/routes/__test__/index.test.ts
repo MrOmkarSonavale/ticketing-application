@@ -3,9 +3,11 @@ import { app } from '../../app';
 import { Order } from "../../models/order";
 import { Ticket } from "../../models/ticket";
 import { signin } from "../../test/setup";
+import mongoose from "mongoose";
 
 const buildTicket = async () => {
     const ticket = Ticket.build({
+        id: new mongoose.Types.ObjectId().toHexString(),
         title: 'concert',
         price: 20
     });
