@@ -3,6 +3,7 @@ import { app } from '../../app';
 import mongoose from 'mongoose';
 import { signin } from '../../test/setup';
 import { natsWrapper } from '../../__mocks__/nats-wrapper';
+import { Ticket } from '../../models/tickets-schema';
 
 //ok
 it('return a 404 if the provided id does not exits', async () => {
@@ -128,6 +129,34 @@ it('publish an event', async () => {
         .send({
             title: "new title",
             price: 100
+        })
+        .expect(200);
+});
+
+it('reject updates if the ticket is reserved', async () => {
+    const cookie = signin();
+
+    const response = await request(app)
+        .post('/api/tickets')
+        .set('Cookie', cookie)
+        .send({
+            title: 'asdfkf',
+            price: 20
+        });
+
+
+    const ticket = await Ticket.findById(response.body.id);
+
+    ticket!.set({ orderId: new mongoose.Types.ObjectId().toHexString() });
+
+    await ticket!.save();
+
+    await request(app)
+        .put(`/api/tickets/${response.body.id}`)
+        .set('Cookie', cookie)
+        .send({
+            title: 'new title',
+            price: 10
         })
         .expect(200);
 });

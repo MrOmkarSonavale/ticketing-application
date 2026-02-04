@@ -1,6 +1,9 @@
 import mongoose from 'mongoose';
 import { app } from './app';
 import { natsWrapper } from './nats-wappper';
+import { OrderCreatedListener } from './events/listeners/order-created-listener';
+import { OrderCandelledListener } from './events/listeners/order-cancelled-listener';
+
 
 const start = async () => {
 
@@ -31,6 +34,11 @@ const start = async () => {
 
         process.on("SIGINT", () => natsWrapper.Client.close());
         process.on("SIGTERM", () => natsWrapper.Client.close());
+
+
+        new OrderCreatedListener(natsWrapper.Client).listen();
+        new OrderCandelledListener(natsWrapper.Client).listen();
+
 
         await mongoose.connect(process.env.MONGO_URI);
         console.log("connected to mongodb");
