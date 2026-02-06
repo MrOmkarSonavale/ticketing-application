@@ -1,0 +1,30 @@
+import express from 'express';
+import bodyParser from 'body-parser';
+import cookieSession from 'cookie-session';
+import { errorHandler } from '@ticketing_dev/common';
+import { NotFoundError } from '@ticketing_dev/common';
+import { currentUser } from '@ticketing_dev/common';
+
+const app = express();
+
+//to ensure when make https call this nignx proxy is secure
+app.set('trust proxy', true);
+
+
+app.use(bodyParser.json());
+app.use(
+    cookieSession({
+        signed: false,
+        secure: false
+    })
+);
+
+app.use(currentUser);
+
+
+app.all(/.*/, async (req, res) => {
+    throw new NotFoundError();
+});
+
+
+export { app };
