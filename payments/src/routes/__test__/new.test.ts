@@ -4,58 +4,97 @@ import { signin } from '../../test/setup';
 import mongoose from 'mongoose';
 import { Order } from '../../models/order';
 import { OrderStatus } from '@ticketing_dev/common';
+import { razorpay } from '../../razorpay';
 
-it('returns a 404 when purchasing an order that does not exit', async () => {
-    await request(app)
-        .post('/api/payments')
-        .set('Cookie', signin())
-        .send({
-            token: 'asffdf',
-            orderId: new mongoose.Types.ObjectId().toHexString()
-        })
-        .expect(404);
-});
+jest.mock('../../__mocks__/razorpay');
 
-it('return a 401 when purchasing an order that doesnt belong to the user', async () => {
-    const order = Order.build({
-        id: new mongoose.Types.ObjectId().toHexString(),
-        userId: new mongoose.Types.ObjectId().toHexString(),
-        version: 0,
-        price: 20,
-        status: OrderStatus.Created,
+describe('Create Razorpay Order', () => {
+
+    it('returns a 404 when purchasing an order that does not exist', async () => {
+        await request(app)
+            .post('/api/payments')
+            .set('Cookie', signin())
+            .send({
+                orderId: new mongoose.Types.ObjectId().toHexString()
+            })
+            .expect(404);
     });
 
-    await order.save();
+    it('returns a 401 when purchasing an order that does not belong to the user', async () => {
 
-    await request(app)
-        .post('/api/payments')
-        .set('Cookie', signin())
-        .send({
-            token: 'asffdf',
-            orderId: order.id
-        })
-        .expect(401);
-});
+        const order = Order.build({
+            id: new mongoose.Types.ObjectId().toHexString(),
+            userId: new mongoose.Types.ObjectId().toHexString(),
+            version: 0,
+            price: 20,
+            status: OrderStatus.Created,
+        });
 
-it('returns a 400 when purchasing a cancelled order', async () => {
-    const userId = new mongoose.Types.ObjectId().toHexString();
+        await order.save();
 
-    const order = Order.build({
-        id: new mongoose.Types.ObjectId().toHexString(),
-        userId: new mongoose.Types.ObjectId().toHexString(),
-        version: 0,
-        price: 20,
-        status: OrderStatus.Cancelled,
+        await request(app)
+            .post('/api/payments')
+            .set('Cookie', signin())
+            .send({
+                orderId: order.id
+            })
+            .expect(401);
     });
 
-    await order.save();
+    it('returns a 400 when purchasing a cancelled order', async () => {
 
-    await request(app)
-        .post('/api/payments')
-        .set('Cookie', signin(userId))
-        .send({
-            orderId: order.id,
-            token: 'afdf'
-        })
-        .expect(400);
+        const userId = new mongoose.Types.ObjectId().toHexString();
+
+        const order = Order.build({
+            id: new mongoose.Types.ObjectId().toHexString(),
+            userId,
+            version: 0,
+            price: 20,
+            status: OrderStatus.Cancelled,
+        });
+
+        await order.save();
+
+        await request(app)
+            .post('/api/payments')
+            .set('Cookie', signin(userId))
+            .send({
+                orderId: order.id
+            })
+            .expect(400);
+    });
+
+    it('returns a 201 and creates Razorpay order with valid inputs', async () => {
+
+        const userId = new mongoose.Types.ObjectId().toHexString();
+
+        const order = Order.build({
+            id: new mongoose.Types.ObjectId().toHexString(),
+            userId,
+            version: 0,
+            price: 20,
+            status: OrderStatus.Created,
+        });
+
+        await order.save();
+
+        await request(app)
+            .post('/api/payments')
+            .set('Cookie', signin(userId))
+            .send({
+                orderId: order.id
+            })
+            .expect(201);
+
+        // Ensure Razorpay orders.create was called
+        expect(razorpay.orders.create).toHaveBeenCalled();
+
+        const razorpayOptions =
+            (razorpay.orders.create as jest.Mock).mock.calls[0][0];
+
+        expect(razorpayOptions.amount).toEqual(order.price * 100);
+        expect(razorpayOptions.currency).toEqual('INR');
+        expect(razorpayOptions.receipt).toContain(order.id);
+    });
+
 });

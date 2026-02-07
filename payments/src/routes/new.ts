@@ -3,7 +3,10 @@ import { body } from 'express-validator';
 
 import { requireAuth, validateRequest, BadRequestError, NotFoundError, NotAuthorizedError, OrderStatus } from '@ticketing_dev/common';
 
+import { Payment } from '../models/payment';
+
 import { Order } from '../models/order';
+import { razorpay } from '../razorpay';
 
 const router = express.Router();
 
@@ -15,7 +18,7 @@ router.post('/api/payments', requireAuth, [
         .not()
         .isEmpty()
 ], validateRequest, async (req: Request, res: Response) => {
-    const { token, orderId } = req.body;
+    const { orderId } = req.body;
 
     const order = await Order.findById(orderId);
 
@@ -29,7 +32,20 @@ router.post('/api/payments', requireAuth, [
         throw new BadRequestError("can not pay for an cancelled order");
     };
 
-    res.send({ success: true });
+    const charge = await razorpay.orders.create({
+        amount: order.price, // Razorpay works in paise
+        currency: "INR",
+        receipt: "ticket_receipt_" + Date.now()
+    });
+
+    const payment = Payment.build({
+        orderId,
+        razorpayId: charge.id
+    });
+
+    await payment.save();
+
+    res.status(201).send({ success: true });
 });
 
 export { router as createChargeRouter };
