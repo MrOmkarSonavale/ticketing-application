@@ -34,10 +34,10 @@ afterAll(async () => {
     await mongoose.connection.close();
 });
 
-export const signin = () => {
+export const signin = (id?: string) => {
     //build a jwt payload {id , email };
     const payload = {
-        id: new mongoose.Types.ObjectId().toHexString(),
+        id: id || new mongoose.Types.ObjectId().toHexString(),
         email: 'test@gmail.com'
     };
 

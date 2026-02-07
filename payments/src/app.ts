@@ -4,8 +4,10 @@ import cookieSession from 'cookie-session';
 import { errorHandler } from '@ticketing_dev/common';
 import { NotFoundError } from '@ticketing_dev/common';
 import { currentUser } from '@ticketing_dev/common';
+import { createChargeRouter } from './routes/new';
 
 const app = express();
+
 
 //to ensure when make https call this nignx proxy is secure
 app.set('trust proxy', true);
@@ -20,7 +22,7 @@ app.use(
 );
 
 app.use(currentUser);
-
+app.use(createChargeRouter);
 
 app.all(/.*/, async (req, res) => {
     throw new NotFoundError();
