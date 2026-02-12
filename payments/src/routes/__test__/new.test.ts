@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import { Order } from '../../models/order';
 import { OrderStatus } from '@ticketing_dev/common';
 import { razorpay } from '../../razorpay';
+import { Payment } from '../../models/payment';
 
 jest.mock('../../__mocks__/razorpay');
 
@@ -95,6 +96,13 @@ describe('Create Razorpay Order', () => {
         expect(razorpayOptions.amount).toEqual(order.price * 100);
         expect(razorpayOptions.currency).toEqual('INR');
         expect(razorpayOptions.receipt).toContain(order.id);
+
+        const payments = await Payment.findOne({
+            orderId: order.id,
+            razorpayId: razorpayOptions!.id,
+        });
+
+        expect(payments).not.toBeNull();
     });
 
 });
