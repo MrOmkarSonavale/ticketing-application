@@ -10,7 +10,7 @@ import { natsWrapper } from '../nats-wappper';
 const router = express.Router();
 const EXPIRATION_WINDOW_SECOND = 15 * 60;
 
-router.get('/api/orders', requireAuth, [
+router.post('/api/orders', requireAuth, [
     body('ticketId')
         .not()
         .isEmpty()
