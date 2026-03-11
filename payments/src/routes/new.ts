@@ -7,6 +7,9 @@ import { Payment } from '../models/payment';
 
 import { Order } from '../models/order';
 import { razorpay } from '../razorpay';
+import { PaymentCreatedPublisher } from '../events/publisher/payment-created-publisher';
+import { natsWrapper } from '../nats-wappper';
+
 
 const router = express.Router();
 
@@ -45,7 +48,13 @@ router.post('/api/payments', requireAuth, [
 
     await payment.save();
 
-    res.status(201).send({ success: true });
+    await new PaymentCreatedPublisher(natsWrapper.Client).publish({
+        id: payment.id,
+        orderId: payment.orderId,
+        razorpayId: payment.razorpayId,
+    });
+
+    res.status(201).send({ success: true, id: payment.id });
 });
 
 export { router as createChargeRouter };
